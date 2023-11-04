@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Lazy;
 
 import java.rmi.server.UID;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity(name = "categories")
 @Table(name = "categories")
@@ -21,7 +20,7 @@ import java.util.UUID;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private UID id;
 
     private String name;
 
@@ -43,6 +42,7 @@ public class Category {
         this.user = user;
     }
 
-
-
+    public Category(String name) {
+        this.name = name;
+    }
 }

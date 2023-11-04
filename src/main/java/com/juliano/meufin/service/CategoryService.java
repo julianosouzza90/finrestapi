@@ -10,15 +10,13 @@ import java.util.UUID;
 
 @Service
 public class CategoryService {
-    private final CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
     public Category create(Category category) throws ConflictException {
-
-        System.out.println(category);
 
         if(categoryRepository.existsByNameAndUserId(category.getName(), category.getUser().getId())) {
             throw  new ConflictException("Já existe uma categoria cadastra com o nome " + category.getName());
