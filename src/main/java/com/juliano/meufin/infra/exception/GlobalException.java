@@ -4,6 +4,7 @@ import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpServerErrorException;
@@ -22,5 +23,11 @@ public class GlobalException {
     ResponseEntity<HandleException> treatmentConflictException(ConflictException ex) {
         HandleException exception = new HandleException(ex.getMessage(), HttpStatus.CONFLICT.value());
         return  new ResponseEntity<>(exception, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    ResponseEntity<HandleException> treatmentAuthenticationException(AuthenticationException ex) {
+        HandleException exception = new HandleException(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
+        return  new ResponseEntity<>(exception, HttpStatus.UNAUTHORIZED);
     }
 }
