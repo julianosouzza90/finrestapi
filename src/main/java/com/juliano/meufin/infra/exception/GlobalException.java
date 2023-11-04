@@ -1,5 +1,6 @@
 package com.juliano.meufin.infra.exception;
 
+import jakarta.servlet.ServletException;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,6 +14,12 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalException {
+    @ExceptionHandler(UnauthorizedException.class)
+    ResponseEntity<HandleException> treatmentServletException(UnauthorizedException ex) {
+        HandleException exception = new HandleException(ex.getMessage(), ex.hashCode());
+        return  new ResponseEntity<>(exception, HttpStatus.CONFLICT);
+
+    }
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     ResponseEntity<HandleException> treatmentIntegrityException(SQLIntegrityConstraintViolationException ex) {
         HandleException exception = new HandleException(ex.getMessage(), 500);
