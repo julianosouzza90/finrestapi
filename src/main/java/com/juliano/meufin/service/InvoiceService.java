@@ -2,6 +2,7 @@ package com.juliano.meufin.service;
 
 import com.juliano.meufin.domain.invoice.Invoice;
 import com.juliano.meufin.domain.invoice.dto.ListInvoicesDTO;
+import com.juliano.meufin.domain.user.User;
 import com.juliano.meufin.infra.exception.CreateInvoiceException;
 import com.juliano.meufin.repository.CategoryRepository;
 import com.juliano.meufin.repository.InvoiceRepository;
@@ -39,7 +40,7 @@ public class InvoiceService {
        return this.invoiceRepository.save(invoice);
     }
 
-    public Page<Invoice> list(ListInvoicesDTO data) {
+    public Page<Invoice> list(ListInvoicesDTO data, User user) {
         LocalDateTime initialDate = data.startDate();
         LocalDateTime finalDate = data.endDate();
 
@@ -55,7 +56,7 @@ public class InvoiceService {
             if(data.type() != null && data.status() != null) {
                 return this.invoiceRepository.findByUserIdAndStatusAndTypeAndCreatedAtBetween(
                         data.pagination(),
-                        data.user().getId(),
+                        user.getId(),
                         data.status(),
                         data.type(),
                         initialDate, finalDate);
@@ -64,7 +65,7 @@ public class InvoiceService {
             if(data.type() != null) {
                 return this.invoiceRepository.findByUserIdAndTypeAndCreatedAtBetween(
                         data.pagination(),
-                        data.user().getId(),
+                        user.getId(),
                         data.type(),
                         initialDate, finalDate);
             }
@@ -72,7 +73,7 @@ public class InvoiceService {
             if(data.status() != null) {
                 return this.invoiceRepository.findByUserIdAndStatusAndCreatedAtBetween(
                         data.pagination(),
-                        data.user().getId(),
+                        user.getId(),
                         data.status(),
                         initialDate, finalDate);
             }
@@ -80,16 +81,16 @@ public class InvoiceService {
         }
 
         if(data.type() != null && data.status() != null) {
-            return  this.invoiceRepository.findByUserIdAndTypeAndStatus(data.pagination(), data.user().getId(), data.type(), data.status());
+            return  this.invoiceRepository.findByUserIdAndTypeAndStatus(data.pagination(), user.getId(), data.type(), data.status());
         }
 
         if(data.type() != null) {
-            return  this.invoiceRepository.findByUserIdAndType(data.pagination(), data.user().getId(), data.type());
+            return  this.invoiceRepository.findByUserIdAndType(data.pagination(), user.getId(), data.type());
         }
         if(data.status() != null) {
-            return  this.invoiceRepository.findByUserIdAndStatus(data.pagination(), data.user().getId(), data.status());
+            return  this.invoiceRepository.findByUserIdAndStatus(data.pagination(), user.getId(), data.status());
         }
 
-        return this.invoiceRepository.findByUserId(data.pagination(), data.user().getId());
+        return this.invoiceRepository.findByUserId(data.pagination(), user.getId());
     }
 }

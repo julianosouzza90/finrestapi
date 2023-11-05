@@ -26,10 +26,16 @@ public class GlobalException {
         return  new ResponseEntity<>(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
     @ExceptionHandler(ConflictException.class)
     ResponseEntity<HandleException> treatmentConflictException(ConflictException ex) {
         HandleException exception = new HandleException(ex.getMessage(), HttpStatus.CONFLICT.value());
         return  new ResponseEntity<>(exception, HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(CreateInvoiceException.class)
+    ResponseEntity<HandleException> treatmentCreateInvoiceException(CreateInvoiceException ex) {
+        HandleException exception = new HandleException(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return  new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AuthenticationException.class)

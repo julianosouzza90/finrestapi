@@ -86,4 +86,14 @@ public class Invoice {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public Invoice(String name, InvoiceTypes type, BigDecimal value, LocalDateTime dueDate, User user, Wallet wallet, Category category) {
+        this.name = name;
+        this.type = type;
+        this.value = value;
+        this.user = user;
+        this.dueDate = dueDate;
+        this.wallet = wallet;
+        this.category = category;
+    }
 }

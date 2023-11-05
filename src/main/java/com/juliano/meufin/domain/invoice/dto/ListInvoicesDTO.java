@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 
-public record ListInvoicesDTO(Pageable pagination, User user, LocalDateTime startDate, LocalDateTime endDate, InvoiceTypes type, InvoiceStatus status) {
+public record ListInvoicesDTO(Pageable pagination, LocalDateTime startDate, LocalDateTime endDate, InvoiceTypes type, InvoiceStatus status) {
 }
