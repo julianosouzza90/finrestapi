@@ -44,7 +44,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("Should be create a new Category")
+    @DisplayName("Should  create a new Category")
     void createCategoryCase2() throws ConflictException {
         Category category = new Category("Category Test 2", new User());
 

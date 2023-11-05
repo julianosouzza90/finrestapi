@@ -9,20 +9,21 @@ import com.juliano.meufin.repository.CategoryRepository;
 import com.juliano.meufin.service.CategoryService;
 import com.juliano.meufin.util.AuthenticatedUser;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("categories")
 public class CategoryController {
     private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
 
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService, CategoryRepository categoryRepository) {
         this.categoryService = categoryService;
+        this.categoryRepository = categoryRepository;
     }
 
     @PostMapping
@@ -38,5 +39,12 @@ public class CategoryController {
                 .toUri();
 
         return ResponseEntity.created(uri).body(new CategoryDetailsDTO(createdCategory));
+    }
+    @GetMapping
+    public ResponseEntity<Page<CategoryDetailsDTO>> list(Pageable pagination) {
+        User user = AuthenticatedUser.get();
+        Page<Category> categories = this.categoryRepository.findByUserId(pagination, user.getId());
+
+        return ResponseEntity.ok(categories.map(CategoryDetailsDTO::new));
     }
 }
