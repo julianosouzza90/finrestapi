@@ -25,6 +25,11 @@ public class GlobalException {
         HandleException exception = new HandleException(ex.getMessage(), 500);
         return  new ResponseEntity<>(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(IllegalArgumentException.class)
+    ResponseEntity<HandleException> treatmentIlegalArgumentsException(IllegalArgumentException ex) {
+        HandleException exception = new HandleException(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return  new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+    }
 
 
     @ExceptionHandler(ConflictException.class)

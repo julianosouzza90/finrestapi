@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.context.annotation.Lazy;
@@ -33,6 +34,7 @@ public class Invoice {
     private InvoiceTypes type;
 
     @Enumerated(EnumType.STRING)
+    @ColumnDefault(value = "PENDING")
     private InvoiceStatus status;
 
     private BigDecimal value;
@@ -95,5 +97,7 @@ public class Invoice {
         this.dueDate = dueDate;
         this.wallet = wallet;
         this.category = category;
+
+        this.status = InvoiceStatus.PENDING;
     }
 }

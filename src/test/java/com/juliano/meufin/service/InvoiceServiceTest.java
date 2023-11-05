@@ -137,7 +137,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByUserIdAndStatusAndTypeAndCreatedAtBetween(any(), any(), any(), any(), any(), any())).thenReturn(page);
 
-        Page<Invoice> result  = this.invoiceService.list(new ListInvoicesDTO(pageable, startDate,endDate,InvoiceTypes.INCOME, InvoiceStatus.PENDING ), new User());
+        Page<Invoice> result  = this.invoiceService.list(pageable, new User(), startDate, endDate, InvoiceTypes.INCOME, InvoiceStatus.PENDING);
 
 
         assertEquals(3, result.getSize());
@@ -159,8 +159,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByUserIdAndTypeAndCreatedAtBetween(any(), any(), any(), any(), any())).thenReturn(page);
 
-        Page<Invoice> result  = this.invoiceService.list(new ListInvoicesDTO(pageable, startDate,endDate,InvoiceTypes.INCOME, null ), new User());
-
+        Page<Invoice> result  = this.invoiceService.list(pageable, new User(), startDate, endDate, InvoiceTypes.INCOME, null);
         assertEquals(3, result.getSize());
 
 
@@ -180,7 +179,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByUserIdAndStatusAndCreatedAtBetween(any(), any(), any(), any(), any())).thenReturn(page);
 
-        Page<Invoice> result  = this.invoiceService.list(new ListInvoicesDTO(pageable, startDate,endDate,null, InvoiceStatus.PENDING ), new User());
+        Page<Invoice> result  = this.invoiceService.list(pageable, new User(), startDate, endDate, null, InvoiceStatus.PENDING);
 
         assertEquals(3, result.getSize());
 
@@ -201,7 +200,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByUserIdAndTypeAndStatus(any(), any(), any(), any())).thenReturn(page);
 
-        Page<Invoice> result  = this.invoiceService.list(new ListInvoicesDTO(pageable, null,null,InvoiceTypes.INCOME, InvoiceStatus.PENDING ), new User());
+        Page<Invoice> result  = this.invoiceService.list(pageable, new User(), null, null,InvoiceTypes.INCOME, InvoiceStatus.PENDING);
 
         assertEquals(3, result.getSize());
 
@@ -222,7 +221,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByUserIdAndType(any(), any(), any())).thenReturn(page);
 
-        Page<Invoice> result  = this.invoiceService.list(new ListInvoicesDTO(pageable, null,null,InvoiceTypes.INCOME, null ), new User());
+        Page<Invoice> result  = this.invoiceService.list(pageable, new User(), null, null, InvoiceTypes.INCOME, null);
 
         assertEquals(3, result.getSize());
 
@@ -243,8 +242,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByUserIdAndStatus(any(), any(), any())).thenReturn(page);
 
-        Page<Invoice> result  = this.invoiceService.list(new ListInvoicesDTO(pageable,  null,null,null, InvoiceStatus.PENDING ), new User());
-
+        Page<Invoice> result  = this.invoiceService.list(pageable, new User(), null, null,null, InvoiceStatus.PENDING);
         assertEquals(3, result.getSize());
 
 
@@ -263,7 +261,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByUserId(any(), any())).thenReturn(page);
 
-        Page<Invoice> result  = this.invoiceService.list(new ListInvoicesDTO(pageable, null,null,null, null ), new User());
+        Page<Invoice> result  = this.invoiceService.list(pageable, new User(),null, null,null,null);
 
         assertEquals(3, result.getSize());
 

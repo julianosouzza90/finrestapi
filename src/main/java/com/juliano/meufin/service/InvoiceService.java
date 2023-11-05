@@ -1,6 +1,8 @@
 package com.juliano.meufin.service;
 
 import com.juliano.meufin.domain.invoice.Invoice;
+import com.juliano.meufin.domain.invoice.InvoiceStatus;
+import com.juliano.meufin.domain.invoice.InvoiceTypes;
 import com.juliano.meufin.domain.invoice.dto.ListInvoicesDTO;
 import com.juliano.meufin.domain.user.User;
 import com.juliano.meufin.infra.exception.CreateInvoiceException;
@@ -8,6 +10,7 @@ import com.juliano.meufin.repository.CategoryRepository;
 import com.juliano.meufin.repository.InvoiceRepository;
 import com.juliano.meufin.repository.WalletRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -40,57 +43,56 @@ public class InvoiceService {
        return this.invoiceRepository.save(invoice);
     }
 
-    public Page<Invoice> list(ListInvoicesDTO data, User user) {
-        LocalDateTime initialDate = data.startDate();
-        LocalDateTime finalDate = data.endDate();
+    public Page<Invoice> list(Pageable pagination, User user, LocalDateTime initialDate, LocalDateTime finalDate, InvoiceTypes type, InvoiceStatus status) {
 
         if(initialDate != null && finalDate == null) {
             finalDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
         }
         if(finalDate != null && initialDate == null) {
-            initialDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
+           throw  new CreateInvoiceException("Para filtrar por data, é preciso informar a data inicial");
         }
 
         if(initialDate != null) {
 
-            if(data.type() != null && data.status() != null) {
+            if(type!= null && status!= null) {
                 return this.invoiceRepository.findByUserIdAndStatusAndTypeAndCreatedAtBetween(
-                        data.pagination(),
+                        pagination,
                         user.getId(),
-                        data.status(),
-                        data.type(),
-                        initialDate, finalDate);
+                        status,
+                        type,
+                        initialDate,
+                        finalDate);
             }
 
-            if(data.type() != null) {
+            if(type != null) {
                 return this.invoiceRepository.findByUserIdAndTypeAndCreatedAtBetween(
-                        data.pagination(),
+                       pagination,
                         user.getId(),
-                        data.type(),
+                        type,
                         initialDate, finalDate);
             }
 
-            if(data.status() != null) {
+            if(status!= null) {
                 return this.invoiceRepository.findByUserIdAndStatusAndCreatedAtBetween(
-                        data.pagination(),
+                        pagination,
                         user.getId(),
-                        data.status(),
+                        status,
                         initialDate, finalDate);
             }
 
         }
 
-        if(data.type() != null && data.status() != null) {
-            return  this.invoiceRepository.findByUserIdAndTypeAndStatus(data.pagination(), user.getId(), data.type(), data.status());
+        if(type != null &&status != null) {
+            return  this.invoiceRepository.findByUserIdAndTypeAndStatus(pagination, user.getId(), type, status);
         }
 
-        if(data.type() != null) {
-            return  this.invoiceRepository.findByUserIdAndType(data.pagination(), user.getId(), data.type());
+        if(type != null) {
+            return  this.invoiceRepository.findByUserIdAndType(pagination, user.getId(), type);
         }
-        if(data.status() != null) {
-            return  this.invoiceRepository.findByUserIdAndStatus(data.pagination(), user.getId(), data.status());
+        if(status != null) {
+            return  this.invoiceRepository.findByUserIdAndStatus(pagination, user.getId(),status);
         }
 
-        return this.invoiceRepository.findByUserId(data.pagination(), user.getId());
+        return this.invoiceRepository.findByUserId(pagination, user.getId());
     }
 }
