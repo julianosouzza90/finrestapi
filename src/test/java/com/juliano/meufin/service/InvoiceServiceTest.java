@@ -1,6 +1,7 @@
 package com.juliano.meufin.service;
 
 import com.juliano.meufin.domain.category.Category;
+import com.juliano.meufin.domain.invoice.Balance;
 import com.juliano.meufin.domain.invoice.Invoice;
 import com.juliano.meufin.domain.invoice.InvoiceStatus;
 import com.juliano.meufin.domain.invoice.InvoiceTypes;
@@ -269,6 +270,50 @@ class InvoiceServiceTest {
         verify(invoiceRepository, times(1)).findByUserId(any(), any());
     }
 
+    @Test
+    @DisplayName("Should get a balance for all wallets")
+    void getBalanceCase1() {
+        Invoice invoiceIncome = new Invoice();
+        invoiceIncome.setType(InvoiceTypes.INCOME);
+        invoiceIncome.setValue(BigDecimal.valueOf(250));
+
+        Invoice invoiceExpense = new Invoice();
+        invoiceExpense.setType(InvoiceTypes.EXPENSE);
+        invoiceExpense.setValue(BigDecimal.valueOf(100));
+
+        List<Invoice> invoices = List.of(invoiceIncome, invoiceExpense);
+        when(this.invoiceRepository.getBalanceByUserId(any())).thenReturn(invoices);
+
+        Balance expected = new Balance(invoiceIncome.getValue(),invoiceExpense.getValue(), invoiceIncome.getValue().subtract(invoiceExpense.getValue()));
+        Balance result = this.invoiceService.getBalance(new User(), null);
+
+        assertEquals(expected, result);
+        verify(invoiceRepository, times(1)).getBalanceByUserId(any());
+
+    }
+
+    @Test
+    @DisplayName("Should get a balance for a specific wallet")
+    void getBalanceCase2() {
+        Invoice invoiceIncome = new Invoice();
+        invoiceIncome.setType(InvoiceTypes.INCOME);
+        invoiceIncome.setValue(BigDecimal.valueOf(250));
+
+        Invoice invoiceExpense = new Invoice();
+        invoiceExpense.setType(InvoiceTypes.EXPENSE);
+        invoiceExpense.setValue(BigDecimal.valueOf(100));
+
+        List<Invoice> invoices = List.of(invoiceIncome, invoiceExpense);
+        when(this.invoiceRepository.getBalanceByUserIdAndWalletId(any(), any())).thenReturn(invoices);
+
+        Balance expected = new Balance(invoiceIncome.getValue(),invoiceExpense.getValue(), invoiceIncome.getValue().subtract(invoiceExpense.getValue()));
+        Balance result = this.invoiceService.getBalance(new User(), UUID.randomUUID());
+
+        assertEquals(expected, result);
+        verify(invoiceRepository, times(1)).getBalanceByUserIdAndWalletId(any(), any());
+
+    }
+
     private List<Invoice> createListInvoices(LocalDateTime startDate, LocalDateTime endDate) {
 
         var invoice1 = new Invoice();
@@ -284,4 +329,7 @@ class InvoiceServiceTest {
         return  List.of(invoice1,invoice2, invoice3);
 
     }
+
+
+
 }

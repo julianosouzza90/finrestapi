@@ -1,9 +1,9 @@
 package com.juliano.meufin.service;
 
+import com.juliano.meufin.domain.invoice.Balance;
 import com.juliano.meufin.domain.invoice.Invoice;
 import com.juliano.meufin.domain.invoice.InvoiceStatus;
 import com.juliano.meufin.domain.invoice.InvoiceTypes;
-import com.juliano.meufin.domain.invoice.dto.ListInvoicesDTO;
 import com.juliano.meufin.domain.user.User;
 import com.juliano.meufin.infra.exception.CreateInvoiceException;
 import com.juliano.meufin.repository.CategoryRepository;
@@ -13,9 +13,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 public class InvoiceService {
@@ -94,5 +100,42 @@ public class InvoiceService {
         }
 
         return this.invoiceRepository.findByUserId(pagination, user.getId());
+    }
+    public Balance getBalance(User user, UUID walletId) {
+
+        List<Invoice> invoices = null;
+
+        if(walletId != null) {
+            invoices = this.invoiceRepository.getBalanceByUserIdAndWalletId(user.getId(), walletId);
+        } else {
+            invoices = this.invoiceRepository.getBalanceByUserId(user.getId());
+        }
+
+
+        return invoices.stream()
+                .map(invoice -> {
+                    Balance balance = new Balance();
+                    if (invoice.getType().equals(InvoiceTypes.INCOME)) {
+                        balance.setIncome(invoice.getValue());
+                        return balance;
+                    }
+                    balance.setExpense(invoice.getValue());
+
+                    return balance;
+                }).reduce(new Balance(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO), (acc, current) -> {
+                    if(current.getIncome() != null) {
+                        acc.setIncome(acc.getIncome().add(current.getIncome()));
+                        acc.setTotal(acc.getTotal().add(current.getIncome()));
+                    }
+                    if(current.getExpense() != null) {
+                        acc.setExpense(acc.getExpense().add(current.getExpense()));
+                        acc.setTotal(acc.getTotal().subtract(current.getExpense()));
+                    }
+
+                    return acc;
+                });
+
+
+
     }
 }

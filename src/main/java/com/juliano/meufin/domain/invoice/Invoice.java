@@ -37,6 +37,7 @@ public class Invoice {
     @ColumnDefault(value = "PENDING")
     private InvoiceStatus status;
 
+    @Column(precision = 10, scale = 2)
     private BigDecimal value;
 
     @Column(name = "due_date")

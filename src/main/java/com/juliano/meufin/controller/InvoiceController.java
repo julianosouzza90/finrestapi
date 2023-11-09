@@ -1,13 +1,13 @@
 package com.juliano.meufin.controller;
 
 import com.juliano.meufin.domain.category.Category;
+import com.juliano.meufin.domain.invoice.Balance;
 import com.juliano.meufin.domain.invoice.Invoice;
 import com.juliano.meufin.domain.invoice.InvoiceStatus;
 import com.juliano.meufin.domain.invoice.InvoiceTypes;
 import com.juliano.meufin.domain.invoice.dto.CreateInvoiceDTO;
 import com.juliano.meufin.domain.invoice.dto.CreateInvoiceResponseDTO;
 import com.juliano.meufin.domain.invoice.dto.InvoicesListResponseDTO;
-import com.juliano.meufin.domain.invoice.dto.ListInvoicesDTO;
 import com.juliano.meufin.domain.user.User;
 import com.juliano.meufin.domain.wallet.Wallet;
 import com.juliano.meufin.repository.CategoryRepository;
@@ -22,9 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("invoices")
@@ -72,7 +72,7 @@ public class InvoiceController {
 
         User user = AuthenticatedUser.get();
 
-        
+
         LocalDateTime initialDate = StringToLocalDateTime.convert(start_date);
         LocalDateTime finalDate = StringToLocalDateTime.convert(end_date);
         var invoiceType = (type != null ? InvoiceTypes.valueOf(type.toUpperCase()) : null);
@@ -80,6 +80,20 @@ public class InvoiceController {
         var invoices = this.invoiceService.list(pagination, user, initialDate, finalDate,invoiceType,invoiceStatus);
 
         return ResponseEntity.ok(invoices.map(InvoicesListResponseDTO::new));
+
+    }
+
+    @GetMapping("/balance")
+    public ResponseEntity<Balance> getBalance(String wallet_id) {
+
+        User user = AuthenticatedUser.get();
+
+        UUID WalletId = (wallet_id != null ? UUID.fromString(wallet_id) : null);
+
+
+        Balance balance = this.invoiceService.getBalance(user, WalletId);
+
+        return ResponseEntity.ok(balance);
 
     }
 }
